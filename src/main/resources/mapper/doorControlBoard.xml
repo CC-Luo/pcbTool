@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhilai.pcb.business.mapper.DoorControlBoardMapper">
+
+    <insert id="insertControlBoard">
+        INSERT INTO doorControlBoard(macAddr,ip,gen,boxNum,putPosition)
+        VALUES
+         (#{macAddr},#{ip},#{gen},#{boxNum},#{putPosition})
+    </insert>
+    
+    <select id="getDoorControlBoards" parameterType="com.zhilai.pcb.business.entity.DoorControlBoard" resultType="com.zhilai.pcb.business.entity.DoorControlBoard">
+        SELECT id,macAddr,ip,gen,boxNum,putPosition FROM doorControlBoard
+        <where>
+            <if test="ip != null">ip = #{ip}</if>
+            <if test="macAddr != null">AND macAddr = #{macAddr}</if>
+        </where>
+    </select>
+
+    <delete id="deleteDoorControlBoard">
+        DELETE FROM doorControlBoard WHERE ip=#{ip},boxNum=#{boxNum},gen=#{gen},putPosition=#{putPosition} WHERE macAddr=#{macAddr}
+    </delete>
+
+    <update id="upDataDoorControlBoard">
+        UPDATE doorControlBoard SET ip=#{ip},putPosition=#{putPosition},gen=#{gen},boxNum=#{boxNum} WHERE macAddr=#{macAddr}
+    </update>
+
+    <delete id="resetDoorControl">
+        DELETE FROM doorControlBoard
+    </delete>
+</mapper>

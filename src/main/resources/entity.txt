@@ -1,0 +1,17 @@
+UnitConfig:
+{
+"ipAddress" : "ipAddress",
+"macAddress" : "macAddress",
+"unitType" : "unitType (Adder or Starter)",
+"lockerConfigs" : [
+"List of LockerConfig"
+LockerConfig:
+{
+"lockerId" : "Id to be displayed for this locker"
+"column" : "column in unit for the slot.",
+"row" : "row in unit for the slot.",
+"doorStatus" : "Opne/Close",
+"occupancyStatus" : "Empty/Full"
+}
+]
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhilai.pcb.business.mapper.BoxMapper">
+
+    <insert id="insert">
+        INSERT INTO main.box(id,macAddr,boxNo,doorState,itemState,row,`column`) VALUES (#{id},#{macAddr},#{boxNo},#{doorState},#{itemState},#{row},#{column})
+    </insert>
+
+    <select id="findByObj" parameterType="com.zhilai.pcb.business.entity.Box" resultType="com.zhilai.pcb.business.entity.Box">
+        SELECT * FROM box
+          <where>
+              <if test="id != null">id = #{id}</if>
+              <if test="macAddr != null">AND macAddr = #{macAddr}</if>
+              <if test="boxNo != null">AND boxNo = #{boxNo}</if>
+              <if test="doorState != null">AND doorState = #{doorState}</if>
+              <if test="itemState != null">AND itemState = #{itemState}</if>
+              <if test="ip != null">AND macAddr in (SELECT macAddr FROM doorControlBoard WHERE ip = #{ip})</if>
+          </where>
+          ORDER BY boxNo+0
+    </select>
+
+    <update id="update" parameterType="com.zhilai.pcb.business.entity.Box">
+        UPDATE box
+          <set>
+              <if test="doorState != null and doorState !=''">doorState = #{doorState},</if>
+              <if test="itemState != null and doorState !=''">itemState = #{itemState}</if>
+          </set>
+          WHERE boxNo = #{id} AND macAddr = #{macAddr}
+    </update>
+
+    <delete id="deleteAll">
+        DELETE FROM box WHERE 1 = 1
+    </delete>
+
+    <delete id="deleteBox">
+        DELETE FROM box WHERE macAddr=#{macAddr}
+    </delete>
+
+</mapper>

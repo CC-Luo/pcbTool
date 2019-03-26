@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="cn"   xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <title>Board Config</title>
+    <style type="text/css">
+        .navbarTitle{
+            width: 100%;
+            position:fixed;
+            z-index:999;
+        }
+        .containerPosition{
+            position: relative;
+            top: 65px;
+        }
+        .operateButton{
+            margin-right:20px;
+        }
+
+        .configDiv{
+            margin-top:82px;
+        }
+
+        .container-fluid{
+            background:#f8f8f8;
+        }
+        .starterBox{
+            width:173px;
+            height: 484px;
+            margin:0 auto;
+            background: url('./images/starterLocker2.png') no-repeat;
+            background-position-y: 100%;
+            -webkit-background-size: 850px;
+            background-size: 850px auto;
+        }
+        .deskBox{
+            width:173px;
+            height: 484px;
+            margin:0 auto;
+            background: url('./images/adderLocker.png') no-repeat;
+            background-position-y: 100%;
+            -webkit-background-size: 1100px auto;
+            background-size: 1100px auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-default navbarTitle" role="navigation">
+            <div class="container-fluid ">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Cabinet Configuration</a>
+                </div>
+            </div>
+            <div class="text-right operateButton">
+                <button type="button" class="btn btn-warning" @click="onSubmit">
+                    <span class="glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span> Submit
+                </button>
+                &nbsp;&nbsp;
+                <button type="button" class="btn btn-primary" @click="onNext">
+                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> Next
+                </button>
+                &nbsp;&nbsp;
+                <button type="button" class="btn btn-success" @click="add()">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add
+                </button>
+                &nbsp;&nbsp;
+                <button type="button" class="btn btn-danger" @click="reset()">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reset
+                </button>
+            </div>
+        </nav>
+        <div class="containerPosition container-fluid">
+            <div class="row">
+                <!--主柜数量-->
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="starterBox" :style="{'background-position-x':startPosition+'px'}">
+
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="configDiv">
+                                <div class="input-group  input-group">
+                                    <span class="input-group-addon">Mac addr</span>
+                                    <input type="text" class="form-control" disabled="disabled" v-model="startData.macAddr">
+                                </div>
+                                <br>
+                                <div class="input-group  input-group">
+                                    <span class="input-group-addon">IP addr</span>
+                                    <input type="text" class="form-control" v-model="startData.ip" placeholder="192.168.1.11">
+                                </div>
+                                <br>
+                                <div class="input-group">
+                                    <span class="input-group-addon">GEN sub</span>
+                                    <select class="form-control" v-model="startData.gen" @change="onGenChange($event)">
+                                        <option :value="item"  v-for="item in gen">{{item}}</option>
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="input-group">
+                                    <span class="input-group-addon">Doors</span>
+                                    <select class="form-control" v-model="startData.boxNum">
+                                        <option :value="item" v-for="item in startCount">{{item}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--副柜模板-->
+                <template v-for="(item,index) in items">
+                    <div class="col-lg-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="deskBox"   :style="{'background-position-x':items[index]+'px'}">
+
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="configDiv">
+                                    <div class="input-group input-group">
+                                        <span class="input-group-addon">Mac addr</span>
+                                        <input type="text" class="form-control" v-model="itemsData[index].macAddr" disabled="disabled" placeholder="AA:BB:CC:DD">
+                                    </div>
+                                    <br>
+                                    <div class="input-group input-group">
+                                        <span class="input-group-addon">IP addr</span>
+                                        <input type="text" class="form-control" v-model="itemsData[index].ip" placeholder="192.168.1.11">
+                                    </div>
+                                    <br>
+                                    <div class="input-group input-group">
+                                        <span class="input-group-addon">Position</span>
+                                        <select class="form-control" v-model="itemsData[index].putPosition">
+                                            <option value="L01">L01</option>
+                                            <option value="L02">L02</option>
+                                            <option value="R01">R01</option>
+                                            <option value="R02">R02</option>
+                                        </select>
+                                    </div>
+                                    <br>
+                                    <div class="input-group input-group">
+                                        <span class="input-group-addon">Doors</span>
+                                        <select class="form-control" v-model="itemsData[index].boxNum"  @change="onDeskChange($event,index)">
+                                            <option :value="item" v-for="item in deskBoxCount">{{item}}</option>
+                                        </select>
+                                    </div>
+                                    <br>
+                                    <br>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-danger" @click="remove(index)">
+                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+            <div class=""></div>
+        </div>
+    </div>
+    <script src="./js/jquery.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="./js/bootstrap.min.js"></script>
+    <!-- 生产环境版本，优化了尺寸和速度 -->
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/lodash.min.js"></script>
+    <script th:inline="javascript">
+        var doorControlBoards = [[${doorControlBoards}]];
+        var originalData = [[${doorControlBoards}]];
+        doorControlBoards = _.sortBy(doorControlBoards, function(item){
+            if(item.putPosition == "Z00"){
+                return "A";
+            }else{
+                return item.putPosition;
+            }
+        })
+
+
+
+        var startData = doorControlBoards[0]&&doorControlBoards[0].putPosition=="Z00"?doorControlBoards.shift():{ip:'',putPosition:'Z00',gen:"Gen3.0",boxNum:23,macAddr:getMac()};
+
+        var position ={"gen2.0":{"20":0,},"gen2.2":{"18":-186},"gen2.5":{"20":-372},"Gen3.0":{"23":-558,"1":-744,"3":-930}};
+        var items=[];
+        for(var x in doorControlBoards){
+            var item = doorControlBoards[x];
+            items.push(position[startData.gen][item.boxNum]);
+        }
+
+        function getMac(){
+            var result=""
+            for(var i=0;i<6;i++){
+                result +=parseInt(Math.random()*239+17).toString(16).toUpperCase()+":";
+            }
+            return result.substring(0, result.length - 1);
+        };
+
+        var app = new Vue({
+            el: '#app',
+            data:{
+                gen:['Gen2.0','Gen2.2','Gen2.5','Gen3.0'],
+                startCount:[startData.boxNum],
+                deskBoxCount:[23,1,3],
+                currentGen:startData.gen,
+                items:items,
+                startData:startData,
+                itemsData:doorControlBoards,
+                startPosition:-678,
+                deskPosition:[-558,-744,-930],
+                constObj:{
+                    "Gen2.0":{"startCount":[4],"deskCount":[20],"background-position":0,"deskBackground-position":[0]},
+                    "Gen2.2":{"startCount":[4],"deskCount":[18],"background-position":-226,"deskBackground-position":[-186]},
+                    "Gen2.5":{"startCount":[15],"deskCount":[20],"background-position":-452,"deskBackground-position":[-372]},
+                    "Gen3.0":{"startCount":[19],"deskCount":[23,1,3],"background-position":-678,"deskBackground-position":[-558,-744,-930]},
+                },
+            },
+            methods:{
+                add:function(event){
+                    this.items.push(this.constObj[this.currentGen]["deskBackground-position"][0]);
+                    var scrollDom = document.getElementsByClassName('containerPosition');
+                    this.itemsData.push({ip:'',putPosition:'L01',boxNum:this.deskBoxCount[0],macAddr:getMac() });
+                    scrollDom.scrollTop = scrollDom.scrollHeight
+                },
+                reset:function(event){
+                    originalData=[];
+                    this.startData={ip:'',putPosition:'Z00',gen:"Gen3.0",boxNum:23,macAddr:getMac()}
+                    this.itemsData.splice(0,this.itemsData.length)
+                    this.items.splice(0,this.items.length)
+                    $.ajax({
+                        type: "POST",
+                        url: "./reset",
+                        dataType: "json",
+                        success: function(result){
+                            if(result.code == 0){
+
+                            }else{
+
+                            }
+                        }
+                    });
+                },
+                remove:function(itemIndex){
+                    this.items.splice(itemIndex, 1)
+                    this.itemsData.splice(itemIndex, 1)
+                },
+                onGenChange:function(event){
+                    var genVal = event.target.value;
+                    this.currentGen = genVal;
+                    this.startCount=this.constObj[genVal].startCount;
+                    this.startPosition = this.constObj[genVal]["background-position"];
+                    this.deskPosition = this.constObj[genVal]["deskBackground-position"];
+                    this.deskBoxCount = this.constObj[genVal]["deskCount"];
+                    var deskPosition=this.constObj[genVal]["deskBackground-position"][0];
+                    this.startData.boxNum = this.startCount[0];
+                    //赋初始值
+                    for(var i in this.items){
+                        this.itemsData[i].boxNum = this.constObj[genVal].deskCount[0];
+                        app.$set(app.items,i,deskPosition);
+
+                    }
+                },
+                onDeskChange:function (event,index) {
+                    var deskPosition=this.constObj[this.currentGen]["deskBackground-position"][event.target.selectedIndex]
+                    app.$set(app.items, index, deskPosition);
+                },
+                onSubmit:function () {
+                    var data =[];
+                    data = _.cloneDeep(this.itemsData);
+                    data.push(this.startData);
+                    var submitData="";
+                    if(originalData.length==0){
+                        submitData="data="+JSON.stringify(data);
+                        $.ajax({
+                            type: "POST",
+                            url: "./submit",
+                            data: submitData,
+                            dataType: "json",
+                            success: function(result){
+                                if(result.code == 0){
+                                    parent.location.href ='doorState';
+                                }else{
+
+                                }
+                            }
+                        });
+                    }else{
+                        var addData = _.differenceBy(data,originalData,"macAddr");
+                        var delData = _.differenceBy(originalData,data,"macAddr");
+                        var upDateData = _.intersectionBy(data,originalData,"macAddr");
+                        submitData="addData="+JSON.stringify(addData)+"&delData="+JSON.stringify(delData)+"&upDateData="+JSON.stringify(upDateData);
+                        $.ajax({
+                            type: "POST",
+                            url: "./reSubmit",
+                            data: submitData,
+                            dataType: "json",
+                            success: function(result){
+                                if(result.code == 0){
+                                    parent.location.href ='doorState';
+                                }else{
+
+                                }
+                            }
+                        });
+                    }
+                },
+                onNext:function(){
+                    parent.location.href ='doorState';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
