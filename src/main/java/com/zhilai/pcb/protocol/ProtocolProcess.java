@@ -31,8 +31,7 @@ public class ProtocolProcess {
 
     public byte[] apply(byte[] applyByte, IoSession session) throws  Exception {
         //获取开门板IP
-        InetSocketAddress inetSocketAddress = (InetSocketAddress) session.getLocalAddress();
-        String ip = inetSocketAddress.getHostString();
+        String ip = ((InetSocketAddress)session.getServiceAddress()).getAddress().getHostName();
 
         MyWebSocketHandler.sendMessageToUser(ip,applyByte,"0");
 

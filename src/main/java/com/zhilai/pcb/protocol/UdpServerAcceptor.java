@@ -48,7 +48,7 @@ public class UdpServerAcceptor {
         sessionConfig.setReuseAddress(true);
 
         acceptor.setHandler(serverIoHandler);
-        acceptor.bind(new InetSocketAddress(ip,12580));
+        acceptor.bind(new InetSocketAddress(ip,30000));
         acceptorMap.put(ip,acceptor);
     }
 

@@ -20,13 +20,14 @@ public class ServerIoHandler extends IoHandlerAdapter {
 	public void messageReceived(IoSession session, Object message) throws Exception {
 		IoBuffer io = (IoBuffer) message;
 		byte[] receiveMsg = io.array();
-		InetSocketAddress inetSocketAddress = (InetSocketAddress) session.getLocalAddress();
+		/*InetSocketAddress inetSocketAddress = (InetSocketAddress) session.getLocalAddress();
 		String ip = inetSocketAddress.getHostString();
 		System.out.print("接收到客户端"+ip+"消息：");
-		printByteMsg(receiveMsg);
+		printByteMsg(receiveMsg);*/
 		byte[] returnByte = protocolProcess.apply(receiveMsg, session);
 		if(returnByte != null)
 			session.write(returnByte);
+		session.closeNow();
 	}
 
 	@Override
@@ -35,11 +36,12 @@ public class ServerIoHandler extends IoHandlerAdapter {
 
 	@Override
 	public void sessionClosed(IoSession session) throws Exception {
+		//System.out.println("关闭一个连接");
 	}
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {
-		System.out.println("收到一个连接");
+		//System.out.println("收到一个连接");
 	}
 
 
